@@ -31,12 +31,46 @@ class ListNode:
             values.append(node.val)
         return values
 
+    def __str__(self):
+        return print(self.as_list())
+
+
+def get_value(node: ListNode):
+    if node:
+        return node.val
+    return 0
+
+
+def get_sum(n1: ListNode, n2: ListNode, m: int):
+    v1 = get_value(n1)
+    v2 = get_value(n2)
+    v = v1 + v2 + m
+    return v % 10, v // 10
+
+
+def new_node(n1: ListNode, n2: ListNode, m: int):
+    v, m = get_sum(n1, n2, m)
+    return ListNode(v), m
+
 
 class Solution:
     def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
-        print(l1)
-        print(l2)
-        return l1
+        n1 = l1
+        n2 = l2
+
+        n, m = new_node(n1, n2, 0)
+        result = n
+
+        while (n1 and n1.next) or (n2 and n2.next):
+            n1 = n1.next if n1 else None
+            n2 = n2.next if n2 else None
+            n.next, m = new_node(n1, n2, m)
+            n = n.next
+
+        if m:
+            n.next = ListNode(m)
+
+        return result
 
 
 class TestSolution(unittest.TestCase):
@@ -51,6 +85,13 @@ class TestSolution(unittest.TestCase):
 
         solution = Solution()
         self.assertEqual([7, 0, 8], solution.addTwoNumbers(l1, l2).as_list())
+
+    def test_2(self):
+        l1 = ListNode(5)
+        l2 = ListNode(5)
+
+        solution = Solution()
+        self.assertEqual([0, 1], solution.addTwoNumbers(l1, l2).as_list())
 
 
 if __name__ == '__main__':
